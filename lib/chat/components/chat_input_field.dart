@@ -123,7 +123,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Icon(Icons.sentiment_dissatisfied_outlined),
+                      // Icon(Icons.sentiment_dissatisfied_outlined),
                       addHorizontalSpace(DefaultPadding/2),
                       Expanded(
                         child: TextField(

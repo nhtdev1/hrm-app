@@ -24,7 +24,7 @@ class _Schedule extends State<ScheduleStaff> {
     'Thứ 5',
     'Thứ 6',
     'Thứ 7',
-    'Chủ nhựt',
+    'Chủ nhật',
   ];
   static const int _count = 21;
   final List<bool> list_schedule = [];

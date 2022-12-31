@@ -29,7 +29,7 @@ class _ArrangementState extends State<Arrangement> {
     'Thứ 5',
     'Thứ 6',
     'Thứ 7',
-    'Chủ nhựt',
+    'Chủ nhật',
   ];
 
   final list_item_lichDuKien = [];

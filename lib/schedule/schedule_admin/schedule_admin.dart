@@ -29,7 +29,7 @@ class _Schedule extends State<ScheduleAdmin> {
     'Thứ 5',
     'Thứ 6',
     'Thứ 7',
-    'Chủ nhựt',
+    'Chủ nhật',
   ];
 
   final list_item_lichDuKien = [];

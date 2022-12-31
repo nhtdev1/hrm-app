@@ -103,10 +103,10 @@ class NavigationDrawerWidget extends StatelessWidget{
                 Navigator.push(context, MaterialPageRoute(builder: (context)
                 => AppInfo()));
               }),
-              buildMenuItem(text: 'Test', icon: Icons.warning_amber_outlined, onClicked: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)
-                => Test()));
-              })
+              // buildMenuItem(text: 'Test', icon: Icons.warning_amber_outlined, onClicked: (){
+              //   Navigator.push(context, MaterialPageRoute(builder: (context)
+              //   => Test()));
+              // })
             ],
           ),
         ),

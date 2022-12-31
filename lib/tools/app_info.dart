@@ -26,8 +26,9 @@ class AppInfo extends StatelessWidget{
               ],
             ),),
             addVerticalSpace(size.height * 0.015),
-            Text('QUÁN ĂN ĐẬU ĐẬU', style: TextStyle(color: COLOR_CONTRAST, fontSize: size.width * 0.052, fontWeight: FontWeight.w900, letterSpacing: size.width * 0.02, wordSpacing: size.width * 0.03)),
+            Text('QUÁN ĂN ĐẬU ĐẬU', style: TextStyle(color: COLOR_CONTRAST, fontSize: 28, fontWeight: FontWeight.w900,  wordSpacing: size.width * 0.03)),
             addVerticalSpace(size.height * 0.1),
+            Text('GVHD: TS.Phạm Thủy Tú'),
             Text('Copyright Nguyễn Trần Bích Khuê'),
             Text('Phiên bản: 1.0')
           ],

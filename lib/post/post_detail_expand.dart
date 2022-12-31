@@ -22,7 +22,7 @@ class PostDetailExpand extends StatelessWidget{
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('post').doc(post_id).collection('comments').snapshots(),
+        stream: FirebaseFirestore.instance.collection('post').doc(post_id).collection('comments').orderBy('time',descending: false).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if(snapshot.hasData) {
             int cmt_count = snapshot.data!.size;

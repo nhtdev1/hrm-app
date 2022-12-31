@@ -27,7 +27,7 @@ class PostDetails extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    DateFormat dateFormat = DateFormat("HH:mm _ dd-MM-yy");
+    DateFormat dateFormat = DateFormat("HH:mm dd-MM-yy");
     TextStyle contentStyle = TextStyle(fontSize: 20);
 
     var date = DateTime.fromMillisecondsSinceEpoch(post_data['time'].millisecondsSinceEpoch);

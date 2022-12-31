@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xeplich/schedule/components/grid_content.dart';
 import 'package:xeplich/schedule/components/grid_day.dart';
-import 'package:xeplich/schedule/schedule_staff/schedule_staff.dart';
 import 'package:xeplich/tools/const.dart';
 import 'package:xeplich/tools/file_storage.dart';
 import 'package:xeplich/tools/function.dart';
@@ -22,7 +21,9 @@ class ViewSchedule extends StatefulWidget {
   final bool isAdmin;
   final String? uid_staff;
 
-  const ViewSchedule({Key? key, this.name, required this.isAdmin, this.uid_staff}) : super(key: key);
+  const ViewSchedule(
+      {Key? key, this.name, required this.isAdmin, this.uid_staff})
+      : super(key: key);
 
   @override
   _ViewScheduleState createState() => _ViewScheduleState();
@@ -42,7 +43,7 @@ class _ViewScheduleState extends State<ViewSchedule> {
     'Thứ 5',
     'Thứ 6',
     'Thứ 7',
-    'Chủ nhựt',
+    'Chủ nhật',
   ];
 
   final List<String> list_item_lichChinhThuc = [];
@@ -51,18 +52,18 @@ class _ViewScheduleState extends State<ViewSchedule> {
   bool? isNow;
   DateFormat df = DateFormat("HH:mm");
 
-  String TraVeTuan(int index){ //index = 0 : tuần này, 1 : tuần sau
+  String TraVeTuan(int index) {
+    //index = 0 : tuần này, 1 : tuần sau
     String firstDay, lastDay;
     DateFormat dateFormat = DateFormat("dd/MM/yy");
     DateTime today = DateTime.now();
 
     int Thu = today.weekday; // 0 = Sun, 6 = Sat
 
-    if(index == 1){
+    if (index == 1) {
       firstDay = dateFormat.format(today.add(Duration(days: -(Thu - 1) + 7)));
-      lastDay = dateFormat.format(today.add(Duration(days: (7 - Thu) +7)));
-    }
-    else{
+      lastDay = dateFormat.format(today.add(Duration(days: (7 - Thu) + 7)));
+    } else {
       firstDay = dateFormat.format(today.add(Duration(days: -(Thu - 1))));
       lastDay = dateFormat.format(today.add(Duration(days: (7 - Thu))));
     }
@@ -86,7 +87,7 @@ class _ViewScheduleState extends State<ViewSchedule> {
     list_order.forEach((element) async {
       list_name.add(name[element]);
     });
-    return await list_name;
+    return list_name;
   }
 
   Future<List> list_nhanVienRanh(int index) async {
@@ -105,16 +106,18 @@ class _ViewScheduleState extends State<ViewSchedule> {
     list_order.forEach((element) async {
       list_name.add(name[element]);
     });
-    return await list_name;
+    return list_name;
   }
 
-  Future<List<Session>> listSession(int num) async{//lichChinhThuc = 0, lichDuKien = 1
+  Future<List<Session>> listSession(int num) async {
+    //lichChinhThuc = 0, lichDuKien = 1
     List<Session> list = [];
     String lich = num == 0 ? 'time_lichChinhThuc' : 'time_lichDuKien';
-    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collection('lich').doc(lich).get();
+    DocumentSnapshot<Map<String, dynamic>> snapshot =
+        await FirebaseFirestore.instance.collection('lich').doc(lich).get();
     snapshot.data()!.forEach((key, value) {
-       Session s = Session(value[0], value[1]);
-       list.add(s);
+      Session s = Session(value[0], value[1]);
+      list.add(s);
     });
     return await list;
   }
@@ -141,14 +144,22 @@ class _ViewScheduleState extends State<ViewSchedule> {
               builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.hasData) {
                   //điền dữ liệu vào lịch
-                  if(update != true) {
+                  if (update != true) {
                     var values = snapshot.data!.data() as Map<String, dynamic>;
-                    String lichChinhThuc = values['lichChinhThuc'];
-                    String lichDuKien = values['lichDuKien'];
-
+                    String lichChinhThuc = values['lichChinhThuc'] ??
+                        "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
+                    if (lichChinhThuc.trim().isEmpty)
+                      lichChinhThuc =
+                          "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
+                    String lichDuKien = values['lichDuKien'] ??
+                        "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
+                    if (lichDuKien.trim().isEmpty)
+                      lichChinhThuc =
+                          "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
                     list_item_lichChinhThuc.clear();
                     list_item_lichDuKien.clear();
 
+                    // 21 days
                     var s1 = lichChinhThuc.split("_");
                     for (String s2 in s1) {
                       if (s2 != '') //loại bỏ phần tử rỗng cuối cùng trong chuỗi
@@ -170,22 +181,32 @@ class _ViewScheduleState extends State<ViewSchedule> {
                             width: size.width - size.width / 4,
                             height: size.height / 10,
                             child: FutureBuilder<List<Session>>(
-                              future: listSession(isNow != false ? 0 : 1),
-                                builder: (context, AsyncSnapshot<List<Session>> snapshot){
-                                  if(snapshot.hasData){
+                                future: listSession(isNow != false ? 0 : 1),
+                                builder: (context,
+                                    AsyncSnapshot<List<Session>> snapshot) {
+                                  if (snapshot.hasData) {
                                     return GridView.builder(
-                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3,
-                                          childAspectRatio: 3 / 2,
-                                        ),
-                                        itemCount: 3,
-                                        itemBuilder: (context, index) => _buildItemSessionCard(context ,size, snapshot.data!.elementAt(index), index),
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        childAspectRatio: 3 / 2,
+                                      ),
+                                      itemCount: 3,
+                                      itemBuilder: (context, index) =>
+                                          _buildItemSessionCard(
+                                              context,
+                                              size,
+                                              snapshot.data!.elementAt(index),
+                                              index),
                                     );
-                                  } return GridView.count(
+                                  }
+                                  return GridView.count(
                                     childAspectRatio: 3 / 2,
                                     crossAxisCount: 3,
                                     children: list_session
-                                        .map((e) => _buildItemSessionCard(context ,size, e, 0)).toList(),
+                                        .map((e) => _buildItemSessionCard(
+                                            context, size, e, 0))
+                                        .toList(),
                                   );
                                 }),
                           ),
@@ -209,25 +230,30 @@ class _ViewScheduleState extends State<ViewSchedule> {
                             height: (7 * size.width) / 8,
                             child: GridView.builder(
                               gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
                                 childAspectRatio: 4 / 2,
                               ),
                               itemCount: list_item_lichDuKien.length,
                               itemBuilder: (context, index) {
                                 return InkResponse(
-                                  onTap: update == false ? null : () async {
-                                    List list;
-                                    isNow != false
-                                      ? list = await list_nhanVienRanh_old(index)
-                                      : list = await list_nhanVienRanh(index);
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return buildAlertDialog(
-                                              context, list, index);
-                                        });
-                                  },
+                                  onTap: update == false
+                                      ? null
+                                      : () async {
+                                          List list;
+                                          isNow != false
+                                              ? list =
+                                                  await list_nhanVienRanh_old(
+                                                      index)
+                                              : list = await list_nhanVienRanh(
+                                                  index);
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return buildAlertDialog(
+                                                    context, list, index);
+                                              });
+                                        },
                                   child: buildGridItemContent(index),
                                 );
                               },
@@ -254,206 +280,241 @@ class _ViewScheduleState extends State<ViewSchedule> {
     return Container(
       padding: EdgeInsets.only(left: DefaultPadding, right: DefaultPadding),
       margin: EdgeInsets.only(bottom: 10),
-          height: widget.isAdmin == true ? size.height * 0.25 :  size.height * 0.15,
-          decoration: BoxDecoration(
-            boxShadow:  [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.7),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
-              ),
-            ],
-            color: COLOR_PRIMARY,
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20.0),
-                bottomRight: Radius.circular(20.0)),
+      height: widget.isAdmin == true ? size.height * 0.25 : size.height * 0.15,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.7),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
           ),
-          child: Column(
+        ],
+        color: COLOR_PRIMARY,
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(20.0),
+            bottomRight: Radius.circular(20.0)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          isNow == false
+              ? Text(
+                  'Tuần Kế Tiếp',
+                  style: titleText,
+                )
+              : Text(
+                  'Tuần Hiện Tại',
+                  style: titleText,
+                ),
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              isNow == false ? Text('Tuần Kế Tiếp', style: titleText,) : Text('Tuần Hiện Tại', style: titleText,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          isNow = true;
-                          update = false;
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
-                        // padding: EdgeInsets.all(5),
-                        primary: isNow != false ? Color.fromRGBO(255, 150, 7, 100) : COLOR_CONTRAST, // <-- Button color
-                        onPrimary: isNow != false ? Colors.white54 : Colors.white, // <-- Splash color
-                      ),
-                      child: Icon(
-                            Icons.navigate_before,
-                            size: 30.0,
-                            )
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isNow = true;
+                      update = false;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    // padding: EdgeInsets.all(5),
+                    primary: isNow != false
+                        ? Color.fromRGBO(255, 150, 7, 100)
+                        : COLOR_CONTRAST, // <-- Button color
+                    onPrimary: isNow != false
+                        ? Colors.white54
+                        : Colors.white, // <-- Splash color
                   ),
-                  SizedBox(
-                    // width: size.width * 0.6,
-                    height: 50.0,
-                    child: Center(
-                      child: isNow != false ? Text(TraVeTuan(0), style: TextStyle(color: COLOR_PRIMARY_1, fontSize: 20, fontWeight: FontWeight.w900))
-                      : Text(TraVeTuan(1), style: TextStyle(color: COLOR_PRIMARY_1, fontSize: 20, fontWeight: FontWeight.w900)),
-                    ),
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          isNow = false;
-                          update = false;
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
-                        // padding: EdgeInsets.all(5),
-                        primary: isNow != false ? COLOR_CONTRAST : Color.fromRGBO(255, 150, 7, 100), // <-- Button color
-                        onPrimary: isNow != false ? Colors.white : Colors.white54, // <-- Splash color
-                      ),
-                      child: Icon(
-                        Icons.navigate_next,
-                        size: 30.0,
-                      )
-                  ),
-                ],
+                  child: Icon(
+                    Icons.navigate_before,
+                    size: 30.0,
+                  )),
+              SizedBox(
+                // width: size.width * 0.6,
+                height: 50.0,
+                child: Center(
+                  child: isNow != false
+                      ? Text(TraVeTuan(0),
+                          style: TextStyle(
+                              color: COLOR_PRIMARY_1,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900))
+                      : Text(TraVeTuan(1),
+                          style: TextStyle(
+                              color: COLOR_PRIMARY_1,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900)),
+                ),
               ),
-              if(widget.isAdmin == true)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                      onPressed: isNow != false
-                          ? null
-                          : () async {
-                        //đếm nhân viên trong file 'name'
-                        var name = await FileStorage().readFile('name');
-                        List count = name.split("\n"); //cắt file
-
-                        list_item_lichDuKien.clear();
-                        list_item_lichDuKien.addAll(
-                            await GiaiThuat().sapLich(count.length - 1));
-
-                        setState(() {
-                          update = true;
-                        });
-                      },
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              EdgeInsets.symmetric(vertical: 5)),
-                          backgroundColor: isNow != false
-                              ? MaterialStateProperty.all<Color>(COLOR_CONTRAST_2)
-                              : MaterialStateProperty.all<Color>(COLOR_CONTRAST),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                              ))),
-                      child: SizedBox(
-                          width: size.width * 0.2,
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.edit,
-                                color: isNow != false ? COLOR_PRIMARY : Colors.white,
-                                size: 25,
-                              ),
-                              Text('Xếp lịch',
-                                  style: TextStyle(
-                                      color: isNow != false ? COLOR_PRIMARY : Colors.white,))
-                            ],
-                          ))),
-                  ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          update = !update;
-                        });
-                      },
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              EdgeInsets.symmetric(vertical: 5)),
-                          backgroundColor: MaterialStateProperty.all<Color>(COLOR_CONTRAST),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                              ))),
-                      child: SizedBox(
-                          width: size.width * 0.2,
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                              Text(update != true ? 'Chỉnh sửa' : 'Huỷ',
-                                  style: TextStyle(
-                                      color: Colors.white))
-                            ],
-                          ))),
-                  ElevatedButton(
-                      onPressed: update != true
-                          ? null
-                          : () {
-                        setState(() {
-                          //lưu lịch
-                          String lich = '';
-                          for (int i = 0; i < 21; i++) {
-                            isNow != false
-                              ? lich += list_item_lichChinhThuc[i] + '_'
-                              : lich += list_item_lichDuKien[i] + '_';
-                          }
-
-                          isNow != false
-                            ? fireStore.collection('lich').doc('lich').update({'lichChinhThuc' : lich})
-                            : fireStore.collection('lich').doc('lich').update({'lichDuKien' : lich});
-                          update = false;
-                          showToast('Đã lưu các cập nhật', null);
-                        });
-                        fireStore.collection('lich').doc('lich').snapshots().listen((event) {
-                          isNow != false
-                            ? PushNotificationService().addNotification('Lịch Làm Hằng Tuần', 'Lịch làm tuần hiện tại đã có sự thay đổi. Nhấn vào xem')
-                            : PushNotificationService().addNotification('Lịch Làm Hằng Tuần', 'Quản lý đã cập nhật lịch làm cho tuần mới. Nhấn vào xem');
-                        });
-                      },
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              EdgeInsets.symmetric(vertical: 5)),
-                          backgroundColor: update != true
-                              ? MaterialStateProperty.all<Color>(COLOR_CONTRAST_2)
-                              : MaterialStateProperty.all<Color>(COLOR_CONTRAST),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                              ))),
-                      child: SizedBox(
-                          width: size.width * 0.2,
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.save,
-                                color:
-                                update == true ? Colors.white : COLOR_PRIMARY,
-                                size: 25,
-                              ),
-                              Text('Lưu',
-                                  style: TextStyle(
-                                      color: update == true
-                                          ? Colors.white
-                                          : COLOR_PRIMARY))
-                            ],
-                          )
-                      )
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isNow = false;
+                      update = false;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    // padding: EdgeInsets.all(5),
+                    primary: isNow != false
+                        ? COLOR_CONTRAST
+                        : Color.fromRGBO(255, 150, 7, 100), // <-- Button color
+                    onPrimary: isNow != false
+                        ? Colors.white
+                        : Colors.white54, // <-- Splash color
                   ),
-                ],
-              ),
-              addVerticalSpace(10)
+                  child: Icon(
+                    Icons.navigate_next,
+                    size: 30.0,
+                  )),
             ],
           ),
-        );
+          if (widget.isAdmin == true)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                    onPressed: isNow != false
+                        ? null
+                        : () async {
+                            //đếm nhân viên trong file 'name'
+                            var name = await FileStorage().readFile('name');
+                            List count = name.split("\n"); //cắt file
+
+                            list_item_lichDuKien.clear();
+                            list_item_lichDuKien.addAll(
+                                await GiaiThuat().sapLich(count.length - 1));
+
+                            setState(() {
+                              update = true;
+                            });
+                          },
+                    style: ButtonStyle(
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(vertical: 5)),
+                        backgroundColor: isNow != false
+                            ? MaterialStateProperty.all<Color>(COLOR_CONTRAST_2)
+                            : MaterialStateProperty.all<Color>(COLOR_CONTRAST),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        ))),
+                    child: SizedBox(
+                        width: size.width * 0.2,
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.edit,
+                              color:
+                                  isNow != false ? COLOR_PRIMARY : Colors.white,
+                              size: 25,
+                            ),
+                            Text('Xếp lịch',
+                                style: TextStyle(
+                                  color: isNow != false
+                                      ? COLOR_PRIMARY
+                                      : Colors.white,
+                                ))
+                          ],
+                        ))),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        update = !update;
+                      });
+                    },
+                    style: ButtonStyle(
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(vertical: 5)),
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(COLOR_CONTRAST),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        ))),
+                    child: SizedBox(
+                        width: size.width * 0.2,
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                              size: 25,
+                            ),
+                            Text(update != true ? 'Chỉnh sửa' : 'Huỷ',
+                                style: TextStyle(color: Colors.white))
+                          ],
+                        ))),
+                ElevatedButton(
+                    onPressed: update != true
+                        ? null
+                        : () {
+                            setState(() {
+                              //lưu lịch
+                              String lich = '';
+                              for (int i = 0; i < 21; i++) {
+                                isNow != false
+                                    ? lich += list_item_lichChinhThuc[i] + '_'
+                                    : lich += list_item_lichDuKien[i] + '_';
+                              }
+
+                              isNow != false
+                                  ? fireStore
+                                      .collection('lich')
+                                      .doc('lich')
+                                      .update({'lichChinhThuc': lich})
+                                  : fireStore
+                                      .collection('lich')
+                                      .doc('lich')
+                                      .update({'lichDuKien': lich});
+                              update = false;
+                              showToast('Đã lưu các cập nhật', null);
+                            });
+                            // Update 25 Dec
+                            // fireStore.collection('lich').doc('lich').snapshots().listen((event) {
+                            //   isNow != false
+                            //     ? PushNotificationService().addNotification('Lịch Làm Hằng Tuần', 'Lịch làm tuần hiện tại đã có sự thay đổi. Nhấn vào xem')
+                            //     : PushNotificationService().addNotification('Lịch Làm Hằng Tuần', 'Quản lý đã cập nhật lịch làm cho tuần mới. Nhấn vào xem');
+                            // });
+                          },
+                    style: ButtonStyle(
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(vertical: 5)),
+                        backgroundColor: update != true
+                            ? MaterialStateProperty.all<Color>(COLOR_CONTRAST_2)
+                            : MaterialStateProperty.all<Color>(COLOR_CONTRAST),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        ))),
+                    child: SizedBox(
+                        width: size.width * 0.2,
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.save,
+                              color:
+                                  update == true ? Colors.white : COLOR_PRIMARY,
+                              size: 25,
+                            ),
+                            Text('Lưu',
+                                style: TextStyle(
+                                    color: update == true
+                                        ? Colors.white
+                                        : COLOR_PRIMARY))
+                          ],
+                        ))),
+              ],
+            ),
+          addVerticalSpace(10)
+        ],
+      ),
+    );
   }
 
   Container buildGridItemContent(int index) {
@@ -474,16 +535,23 @@ class _ViewScheduleState extends State<ViewSchedule> {
     );
   }
 
-  AlertDialog buildAlertDialog(BuildContext context, List<dynamic> list, int index) {
+  AlertDialog buildAlertDialog(
+      BuildContext context, List<dynamic> list, int index) {
     return AlertDialog(
       actionsPadding: EdgeInsets.only(bottom: 15),
       titlePadding: EdgeInsets.only(top: 30, bottom: 10),
       title: Center(
           child: Text(
-            'Lựa chọn nhân viên muốn đổi',
-            style: titleText,
-          )),
-      content: dialogContainer(context, list, index),
+        'Lựa chọn nhân viên muốn đổi',
+        style: titleText,
+      )),
+      content: dialogContainer(
+          context,
+          list,
+          index,
+          isNow != false
+              ? list_item_lichChinhThuc[index]
+              : list_item_lichDuKien[index]),
       actions: [
         Center(
           child: ElevatedButton(
@@ -495,20 +563,22 @@ class _ViewScheduleState extends State<ViewSchedule> {
                 padding: MaterialStateProperty.all(
                     EdgeInsets.symmetric(vertical: 5)),
                 backgroundColor:
-                MaterialStateProperty.all<Color>(COLOR_PRIMARY_1),
+                    MaterialStateProperty.all<Color>(COLOR_PRIMARY_1),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ))),
+                  borderRadius: BorderRadius.circular(10.0),
+                ))),
           ),
         )
       ],
     );
   }
 
-  Widget dialogContainer(BuildContext context, List list, int gridIndex) {
+  Widget dialogContainer(
+      BuildContext context, List list, int gridIndex, String currentValue) {
     Size size = MediaQuery.of(context).size;
     String? _group = '';
+    if (currentValue != "-") _group = currentValue;
     return Container(
       height: size.height * 0.4, // Change as per your requirement
       width: size.width * 0.8, // Change as per your requirement
@@ -518,18 +588,23 @@ class _ViewScheduleState extends State<ViewSchedule> {
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) {
           return RadioListTile<String>(
+              selected:
+                  list[index].toString() == currentValue && currentValue != '-',
               title: Text(
                 list[index].toString(),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
               value: list[index],
+              toggleable: true,
               groupValue: _group,
               onChanged: (value) {
                 setState(() {
                   _group = value;
                   isNow != false
-                      ? list_item_lichChinhThuc[gridIndex] = list[index]
-                      : list_item_lichDuKien[gridIndex] = list[index];
+                      ? list_item_lichChinhThuc[gridIndex] =
+                          value == null ? '-' : value
+                      : list_item_lichDuKien[gridIndex] =
+                          value == null ? '-' : value;
                   print(list_item_lichChinhThuc);
                   Navigator.pop(context);
                 });
@@ -539,106 +614,106 @@ class _ViewScheduleState extends State<ViewSchedule> {
     );
   }
 
-  Container _buildBottomSheet(Size size, int session_num){
+  Container _buildBottomSheet(Size size, int session_num) {
     String _timeIn = '', _timeOut = '';
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: DefaultPadding*1.5),
+      padding: EdgeInsets.symmetric(horizontal: DefaultPadding * 1.5),
       height: size.height * 0.3,
       decoration: BoxDecoration(
           color: COLOR_PRIMARY_3,
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
-      ),
-      child: Stack(
-          children:[
-            Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TimePickerSpinner(
-                      normalTextStyle: TextStyle(
-                          fontSize: 24,
-                          color: COLOR_CONTRAST_1
-                      ),
-                      highlightedTextStyle: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: COLOR_PRIMARY_1
-                      ),
-                      spacing: 25,
-                      itemHeight: 50,
-                      isForce2Digits: true,
-                      minutesInterval: 15,
-                      onTimeChange: (time) {
-                        _timeIn = df.format(time).toString();
-                      },
-                    ),
-                    Center(child: Text('-', style: titleText,)),
-                    TimePickerSpinner(
-                      normalTextStyle: TextStyle(
-                          fontSize: 24,
-                          color: COLOR_CONTRAST_1
-                      ),
-                      highlightedTextStyle: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: COLOR_PRIMARY_1
-                      ),
-                      spacing: 25,
-                      itemHeight: 50,
-                      isForce2Digits: true,
-                      minutesInterval: 15,
-                      onTimeChange: (time) {
-                        _timeOut = df.format(time).toString();
-                      },
-                    ),
-                  ],
-                )
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+      child: Stack(children: [
+        Center(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TimePickerSpinner(
+              normalTextStyle: TextStyle(fontSize: 24, color: COLOR_CONTRAST_1),
+              highlightedTextStyle: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: COLOR_PRIMARY_1),
+              spacing: 25,
+              itemHeight: 50,
+              isForce2Digits: true,
+              minutesInterval: 15,
+              onTimeChange: (time) {
+                _timeIn = df.format(time).toString();
+              },
             ),
-            Positioned(
-                right: 0,
-                top: 10,
-                child: InkResponse(
-                  child: Text('OK', style: TextStyle(color: Colors.red)),
-                  onTap: (){
-                    print(_timeIn + ' - ' + _timeOut);
-                    FirebaseFirestore.instance.collection('lich').doc(isNow != false ? 'time_lichChinhThuc' : 'time_lichDuKien').update({
-                      '$session_num' : [_timeIn, _timeOut]
-                    });
-                    setState(() {
-
-                    });
-                    Navigator.pop(context);
-                  },
-                )
-            )
-          ]
-      ),
+            Center(
+                child: Text(
+              '-',
+              style: titleText,
+            )),
+            TimePickerSpinner(
+              normalTextStyle: TextStyle(fontSize: 24, color: COLOR_CONTRAST_1),
+              highlightedTextStyle: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: COLOR_PRIMARY_1),
+              spacing: 25,
+              itemHeight: 50,
+              isForce2Digits: true,
+              minutesInterval: 15,
+              onTimeChange: (time) {
+                _timeOut = df.format(time).toString();
+              },
+            ),
+          ],
+        )),
+        Positioned(
+            right: 0,
+            top: 10,
+            child: InkResponse(
+              child: Text('OK', style: TextStyle(color: Colors.red)),
+              onTap: () {
+                print(_timeIn + ' - ' + _timeOut);
+                FirebaseFirestore.instance
+                    .collection('lich')
+                    .doc(isNow != false
+                        ? 'time_lichChinhThuc'
+                        : 'time_lichDuKien')
+                    .update({
+                  '$session_num': [_timeIn, _timeOut]
+                });
+                setState(() {});
+                Navigator.pop(context);
+              },
+            ))
+      ]),
     );
   }
 
-  Widget _buildItemSessionCard(BuildContext context, Size size, dynamic element, int session_num){
+  Widget _buildItemSessionCard(
+      BuildContext context, Size size, dynamic element, int session_num) {
     return Card(
       child: InkResponse(
-        onTap: (){
-          widget.isAdmin != true ? null :
-          showBottomSheet(context: context,
-              builder: (context){
-                return _buildBottomSheet(size, session_num);
-              });
+        onTap: () {
+          widget.isAdmin != true
+              ? null
+              : showBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return _buildBottomSheet(size, session_num);
+                  });
         },
         child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  // COLOR_CONTRAST_1,
-                  COLOR_PRIMARY_2.withOpacity(0.4),
-                  Colors.white
-                ],
-              )),
-          child:
-          Center(child: (element is Session) ? Text(element.timeIn + ' - ' + element.timeOut) : Text(element.toString())),
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              // COLOR_CONTRAST_1,
+              COLOR_PRIMARY_2.withOpacity(0.4),
+              Colors.white
+            ],
+          )),
+          child: Center(
+              child: (element is Session)
+                  ? Text(element.timeIn + ' - ' + element.timeOut)
+                  : Text(element.toString())),
         ),
       ),
     );

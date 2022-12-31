@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 
+import '../schedule/view_schedule.dart';
 import 'components/navigation_drawer_widget.dart';
 
 class HomeScreen extends StatelessWidget{
@@ -16,7 +17,7 @@ class HomeScreen extends StatelessWidget{
     final List<MenuItem> menuItem = [
       MenuItem(title: 'Quản Lý Lịch Làm', subTitle: 'Xem và sắp xếp lịch làm của các tuần', imgBgr: 'assets/img3.jpg'),
       // MenuItem(title: 'Sắp Xếp', subTitle: 'Sắp xếp nhân sự cho tuần sau', imgBgr: 'assets/img4.png'),
-      MenuItem(title: 'Thông Tin Nhân Viên', subTitle: 'Xem và chỉnh sửa thông tin nhân viên', imgBgr: 'assets/img7.jpg'),
+      MenuItem(title: 'Quản Lý Nhân Viên', subTitle: 'Xem và chỉnh sửa thông tin nhân viên', imgBgr: 'assets/img7.jpg'),
       MenuItem(title: 'Tin Nhắn', subTitle: 'Liên lạc với các thành viên khác', imgBgr: 'assets/img9.png'),
       MenuItem(title: 'Bài Đăng', subTitle: 'Xem và chia sẻ công khai các bài viết', imgBgr: 'assets/img5.jpg'),
       MenuItem(title: 'Ghi Chú', subTitle: 'Xem và tạo các ghi chú', imgBgr: 'assets/img10.jpg'),
@@ -37,7 +38,10 @@ class HomeScreen extends StatelessWidget{
           actions: [
             IconButton(
                 onPressed: (){
-                  _openBrowser();
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ViewSchedule(isAdmin: true)),
+                  );
                 },
                 icon: Icon(Icons.calendar_today_rounded)
             )

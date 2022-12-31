@@ -5,9 +5,6 @@
 // //không dùng
 // class CardItem extends StatelessWidget{
 //   final List<CardStaff> list_staff = [
-//     CardStaff(name: 'Hồ Việt Phát', id: '001', urlAvt: 'https://ss-images.saostar.vn/pc/1605234579397/z2174715918193_7a8c2d1a36fa6b98074de65420dcb7dd(1).jpg'),
-//     CardStaff(name: 'Hồ Việt Phát', id: '002', urlAvt: 'https://ss-images.saostar.vn/pc/1605234579397/z2174715918193_7a8c2d1a36fa6b98074de65420dcb7dd(1).jpg'),
-//     CardStaff(name: 'Hồ Việt Phát', id: '003', urlAvt: 'https://ss-images.saostar.vn/pc/1605234579397/z2174715918193_7a8c2d1a36fa6b98074de65420dcb7dd(1).jpg'),
 //   ];
 //
 //   @override

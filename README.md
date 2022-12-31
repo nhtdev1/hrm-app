@@ -1,4 +1,8 @@
-# xeplich
+# Xeplich 
+
+## Author
+Full Name: Nguyen Tran Bich Khue
+Email: bichkhue283@gmail.com
 
 Human resource management
 

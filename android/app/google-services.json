@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "459455275011",
+    "firebase_url": "https://hrm210799-default-rtdb.firebaseio.com",
+    "project_id": "hrm210799",
+    "storage_bucket": "hrm210799.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:459455275011:android:439b6e01ac9935dc25ae36",
+        "android_client_info": {
+          "package_name": "com.bkhue.hrm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "459455275011-j3r7v22goqe5u3prabnlg1ot50060ahm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdfgLkWcGKN41Qp3hy2jcz9GEk9CVkIiE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "459455275011-j3r7v22goqe5u3prabnlg1ot50060ahm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "459455275011-66jmh1o3brvaplenp2ac2gvflp0jmfjf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bkhue.hrm"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:459455275011:android:c5817ae25fe2214f25ae36",
+        "android_client_info": {
+          "package_name": "com.vietphat.hrm_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "459455275011-j3r7v22goqe5u3prabnlg1ot50060ahm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdfgLkWcGKN41Qp3hy2jcz9GEk9CVkIiE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "459455275011-j3r7v22goqe5u3prabnlg1ot50060ahm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "459455275011-66jmh1o3brvaplenp2ac2gvflp0jmfjf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bkhue.hrm"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

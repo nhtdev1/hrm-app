@@ -46,12 +46,12 @@ class _MessengerState extends State<ChatContent> {
               ),
               iconTheme: IconThemeData(color: COLOR_PRIMARY_1),
               backgroundColor: COLOR_PRIMARY_3,
-              actions: [
-                Icon(Icons.local_phone),
-                addHorizontalSpace(DefaultPadding),
-                Icon(Icons.info_outline_rounded),
-                addHorizontalSpace(DefaultPadding),
-              ],
+              // actions: [
+              //   Icon(Icons.local_phone),
+              //   addHorizontalSpace(DefaultPadding),
+              //   Icon(Icons.info_outline_rounded),
+              //   addHorizontalSpace(DefaultPadding),
+              // ],
             ),
             body: Body(uid_sender: widget.sender_uid, uid_reciever: widget.info_data['uid'], email: widget.info_data['email']),
           );

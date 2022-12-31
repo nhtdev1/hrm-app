@@ -538,7 +538,7 @@ class _MemberDetailsState extends State<MemberDetails> {
       keyboardType: TextInputType.text,
       validator: (value) {
         if (value!.isNotEmpty) {
-          if (value.isValidName)
+          if (value.isNotEmpty)
             return null;
           else
             return 'Vui lòng nhập đúng định dạng';

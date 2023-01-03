@@ -27,7 +27,7 @@ class PostDoc {
         email = json['email'] ?? "",
         image = json['image'] ?? "",
         name = json['name'] ?? "",
-        createdAt = json['time'] ?? 99999999999;
+        createdAt = json['time'] ?? 9999999999999;
 
   Map<String, dynamic> toJson() => {
         'uid': uid,

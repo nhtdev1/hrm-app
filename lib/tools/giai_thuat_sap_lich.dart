@@ -14,8 +14,8 @@ class GiaiThuat{
   //cập nhật lịch rảnh vào file khi ...
   void lichRanh_databaseToFile(){
     Query ref = fireStore.collection('users').orderBy('no', descending: false);
-    ref.get().then((QuerySnapshot snapshot){
-      FileStorage().cleanFile('lichRanh'); //reset lại file
+    ref.get().then((QuerySnapshot snapshot)async{
+      await FileStorage().cleanFile('lichRanh'); //reset lại file
       var values = snapshot.docs;
       values.forEach((element) {
         var data = element.data() as Map<String, dynamic>;
@@ -45,8 +45,8 @@ class GiaiThuat{
 
   void name_databaseToFile(){
     Query ref = fireStore.collection('users').orderBy('no', descending: false);
-    ref.get().then((QuerySnapshot snapshot){
-      FileStorage().cleanFile('name'); //reset lại file
+    ref.get().then((QuerySnapshot snapshot)async{
+      await FileStorage().cleanFile('name'); //reset lại file
       var values = snapshot.docs;
       values.forEach((element) {
         var data = element.data() as Map<String, dynamic>;

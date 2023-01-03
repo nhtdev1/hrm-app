@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:intl/intl.dart';
 
+import '../chart/ChartPage.dart';
 import 'schedule_admin/schedule_admin.dart';
 // export 'package:xeplich/arrangement_admin/schedule.dart';
 
@@ -136,142 +137,196 @@ class _ViewScheduleState extends State<ViewSchedule> {
         iconTheme: IconThemeData(color: COLOR_PRIMARY_1),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Header(size, themeData),
-          StreamBuilder(
-              stream: fireStore.collection('lich').doc('lich').snapshots(),
-              builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                if (snapshot.hasData) {
-                  //điền dữ liệu vào lịch
-                  if (update != true) {
-                    var values = snapshot.data!.data() as Map<String, dynamic>;
-                    String lichChinhThuc = values['lichChinhThuc'] ??
-                        "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
-                    if (lichChinhThuc.trim().isEmpty)
-                      lichChinhThuc =
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Header(size, themeData),
+            StreamBuilder(
+                stream: fireStore.collection('lich').doc('lich').snapshots(),
+                builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    //điền dữ liệu vào lịch
+                    if (update != true) {
+                      var values = snapshot.data!.data() as Map<String, dynamic>;
+                      String lichChinhThuc = values['lichChinhThuc'] ??
                           "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
-                    String lichDuKien = values['lichDuKien'] ??
+                      if (lichChinhThuc.trim().isEmpty)
+                        lichChinhThuc =
                         "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
-                    if (lichDuKien.trim().isEmpty)
-                      lichChinhThuc =
+                      String lichDuKien = values['lichDuKien'] ??
                           "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
-                    list_item_lichChinhThuc.clear();
-                    list_item_lichDuKien.clear();
+                      if (lichDuKien.trim().isEmpty)
+                        lichChinhThuc =
+                        "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
+                      list_item_lichChinhThuc.clear();
+                      list_item_lichDuKien.clear();
 
-                    // 21 days
-                    var s1 = lichChinhThuc.split("_");
-                    for (String s2 in s1) {
-                      if (s2 != '') //loại bỏ phần tử rỗng cuối cùng trong chuỗi
-                        list_item_lichChinhThuc.add(s2);
-                    }
+                      // 21 days
+                      var s1 = lichChinhThuc.split("_");
+                      for (String s2 in s1) {
+                        if (s2 != '') //loại bỏ phần tử rỗng cuối cùng trong chuỗi
+                          list_item_lichChinhThuc.add(s2);
+                      }
 
-                    s1 = lichDuKien.split("_");
-                    for (String s2 in s1) {
-                      if (s2 != '') list_item_lichDuKien.add(s2);
+                      s1 = lichDuKien.split("_");
+                      for (String s2 in s1) {
+                        if (s2 != '') list_item_lichDuKien.add(s2);
+                      }
                     }
-                  }
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          SizedBox(
-                              width: size.width / 4, height: size.height / 10),
-                          SizedBox(
-                            width: size.width - size.width / 4,
-                            height: size.height / 10,
-                            child: FutureBuilder<List<Session>>(
-                                future: listSession(isNow != false ? 0 : 1),
-                                builder: (context,
-                                    AsyncSnapshot<List<Session>> snapshot) {
-                                  if (snapshot.hasData) {
-                                    return GridView.builder(
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3,
-                                        childAspectRatio: 3 / 2,
-                                      ),
-                                      itemCount: 3,
-                                      itemBuilder: (context, index) =>
-                                          _buildItemSessionCard(
-                                              context,
-                                              size,
-                                              snapshot.data!.elementAt(index),
-                                              index),
+                    return Column(
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(
+                                width: size.width / 4, height: size.height / 10),
+                            SizedBox(
+                              width: size.width - size.width / 4,
+                              height: size.height / 10,
+                              child: FutureBuilder<List<Session>>(
+                                  future: listSession(isNow != false ? 0 : 1),
+                                  builder: (context,
+                                      AsyncSnapshot<List<Session>> snapshot) {
+                                    if (snapshot.hasData) {
+                                      return GridView.builder(
+                                        gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3,
+                                          childAspectRatio: 3 / 2,
+                                        ),
+                                        itemCount: 3,
+                                        itemBuilder: (context, index) =>
+                                            _buildItemSessionCard(
+                                                context,
+                                                size,
+                                                snapshot.data!.elementAt(index),
+                                                index),
+                                      );
+                                    }
+                                    return GridView.count(
+                                      childAspectRatio: 3 / 2,
+                                      crossAxisCount: 3,
+                                      children: list_session
+                                          .map((e) => _buildItemSessionCard(
+                                          context, size, e, 0))
+                                          .toList(),
                                     );
-                                  }
-                                  return GridView.count(
-                                    childAspectRatio: 3 / 2,
-                                    crossAxisCount: 3,
-                                    children: list_session
-                                        .map((e) => _buildItemSessionCard(
-                                            context, size, e, 0))
-                                        .toList(),
-                                  );
-                                }),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: size.width / 4,
-                            height: (7 * size.width) / 8,
-                            child: GridView.count(
-                              childAspectRatio: 4 / 2,
-                              crossAxisCount: 1,
-                              children: list_day
-                                  .map((e) => GridviewDay(item: e))
-                                  .toList(),
+                                  }),
                             ),
-                          ),
-                          SizedBox(
-                            width: (3 * size.width) / 4,
-                            height: (7 * size.width) / 8,
-                            child: GridView.builder(
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: size.width / 4,
+                              height: (7 * size.width) / 8,
+                              child: GridView.count(
                                 childAspectRatio: 4 / 2,
+                                crossAxisCount: 1,
+                                children: list_day
+                                    .map((e) => GridviewDay(item: e))
+                                    .toList(),
                               ),
-                              itemCount: list_item_lichDuKien.length,
-                              itemBuilder: (context, index) {
-                                return InkResponse(
-                                  onTap: update == false
-                                      ? null
-                                      : () async {
-                                          List list;
-                                          isNow != false
-                                              ? list =
-                                                  await list_nhanVienRanh_old(
-                                                      index)
-                                              : list = await list_nhanVienRanh(
-                                                  index);
-                                          showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return buildAlertDialog(
-                                                    context, list, index);
-                                              });
-                                        },
-                                  child: buildGridItemContent(index),
-                                );
-                              },
                             ),
-                          ),
-                        ],
-                      )
-                    ],
+                            SizedBox(
+                              width: (3 * size.width) / 4,
+                              height: (7 * size.width) / 8,
+                              child: GridView.builder(
+                                gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  childAspectRatio: 4 / 2,
+                                ),
+                                itemCount: list_item_lichDuKien.length,
+                                itemBuilder: (context, index) {
+                                  return InkResponse(
+                                    onTap: update == false
+                                        ? null
+                                        : () async {
+                                      List list;
+                                      isNow != false
+                                          ? list =
+                                      await list_nhanVienRanh_old(
+                                          index)
+                                          : list = await list_nhanVienRanh(
+                                          index);
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return buildAlertDialog(
+                                                context, list, index);
+                                          });
+                                    },
+                                    child: buildGridItemContent(index),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    );
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: CircularProgressIndicator(
+                      color: COLOR_PRIMARY_1,
+                    ),
                   );
-                }
-                return Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: CircularProgressIndicator(
-                    color: COLOR_PRIMARY_1,
-                  ),
-                );
-              }),
-        ],
+                }),
+            if (widget.isAdmin)
+              buildMenuItem(
+                  text: 'Thống kê',
+                  icon: Icons.bar_chart,
+                  onClicked: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ChartPage(uid: 'admin')));
+                  }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildMenuItem(
+      {required String text, required IconData icon, VoidCallback? onClicked}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        onTap: onClicked,
+        child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: Color(0xFFEFEFEF)),
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, .08),
+                blurRadius: 24.0,
+              )
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 30,
+                height: 30,
+                child: Icon(Icons.bar_chart),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                text,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 18,
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

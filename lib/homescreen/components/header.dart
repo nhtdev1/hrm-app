@@ -38,7 +38,7 @@ class Header extends StatelessWidget{
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('QUẢN LÝ NHÂN SỰ', style: themeData.textTheme.headline3!.copyWith(color: COLOR_PRIMARY_1)),
+                    Text('QUẢN LÝ LỊCH LÀM', style: themeData.textTheme.headline3!.copyWith(color: COLOR_PRIMARY_1)),
                     addVerticalSpace(10),
                     Text('Quán Ăn Đậu Đậu', style: themeData.textTheme.headline1!.copyWith(color: COLOR_CONTRAST, letterSpacing: 3)),
                   ],

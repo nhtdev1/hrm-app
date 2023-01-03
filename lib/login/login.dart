@@ -144,7 +144,7 @@ class _LoginState extends State<Login> {
                     ),
                     addVerticalSpace(size.height * 0.03),
                     Text(
-                      'Quản Lý Nhân Sự',
+                      'Quản Lý Lịch Làm',
                       style: TextStyle(
                         fontSize: size.width * 0.09,
                         color: COLOR_PRIMARY_1,

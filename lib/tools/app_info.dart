@@ -16,7 +16,7 @@ class AppInfo extends StatelessWidget{
           children: [
             Image.asset('assets/icon_app.png', width: size.width * 0.28,),
             addVerticalSpace(size.height * 0.03),
-            Text('Quản Lý Nhân Sự', style: TextStyle(fontSize: size.width * 0.09, color: COLOR_PRIMARY_1, fontWeight: FontWeight.w900,
+            Text('Quản Lý Lịch Làm', style: TextStyle(fontSize: size.width * 0.09, color: COLOR_PRIMARY_1, fontWeight: FontWeight.w900,
               shadows: <Shadow>[
                 Shadow(
                   offset: Offset(5.0, 5.0),

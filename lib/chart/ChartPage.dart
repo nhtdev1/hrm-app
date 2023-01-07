@@ -42,7 +42,8 @@ class Employee {
     int totalShiftNextWeek = countHoursOfStaff(json["lichRanh"] ?? "");
     int totalShiftThisWeek = countHoursOfStaff(json["lichRanh_old"] ?? "");
     DateTime today = DateTime.now();
-    List<int> todaySchedule = mapSchedule[today.weekday]!; // 0 = Sun, 6 = Sat
+    List<int> todaySchedule = mapSchedule[
+        today.weekday == 7 ? 0 : today.weekday]!; // 0 = Sun, 6 = Sat
     int totalShiftToday =
         countHoursOfStaffToday(json["lichRanh_old"] ?? "", todaySchedule);
     return Employee(

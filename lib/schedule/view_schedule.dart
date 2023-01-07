@@ -13,6 +13,7 @@ import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:intl/intl.dart';
 
 import '../chart/ChartPage.dart';
+import '../send_email/send_email.dart';
 import 'schedule_admin/schedule_admin.dart';
 // export 'package:xeplich/arrangement_admin/schedule.dart';
 
@@ -147,24 +148,26 @@ class _ViewScheduleState extends State<ViewSchedule> {
                   if (snapshot.hasData) {
                     //điền dữ liệu vào lịch
                     if (update != true) {
-                      var values = snapshot.data!.data() as Map<String, dynamic>;
+                      var values =
+                          snapshot.data!.data() as Map<String, dynamic>;
                       String lichChinhThuc = values['lichChinhThuc'] ??
                           "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
                       if (lichChinhThuc.trim().isEmpty)
                         lichChinhThuc =
-                        "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
+                            "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
                       String lichDuKien = values['lichDuKien'] ??
                           "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
                       if (lichDuKien.trim().isEmpty)
                         lichChinhThuc =
-                        "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
+                            "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
                       list_item_lichChinhThuc.clear();
                       list_item_lichDuKien.clear();
 
                       // 21 days
                       var s1 = lichChinhThuc.split("_");
                       for (String s2 in s1) {
-                        if (s2 != '') //loại bỏ phần tử rỗng cuối cùng trong chuỗi
+                        if (s2 !=
+                            '') //loại bỏ phần tử rỗng cuối cùng trong chuỗi
                           list_item_lichChinhThuc.add(s2);
                       }
 
@@ -178,7 +181,8 @@ class _ViewScheduleState extends State<ViewSchedule> {
                         Row(
                           children: [
                             SizedBox(
-                                width: size.width / 4, height: size.height / 10),
+                                width: size.width / 4,
+                                height: size.height / 10),
                             SizedBox(
                               width: size.width - size.width / 4,
                               height: size.height / 10,
@@ -189,7 +193,7 @@ class _ViewScheduleState extends State<ViewSchedule> {
                                     if (snapshot.hasData) {
                                       return GridView.builder(
                                         gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                            SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 3,
                                           childAspectRatio: 3 / 2,
                                         ),
@@ -207,7 +211,7 @@ class _ViewScheduleState extends State<ViewSchedule> {
                                       crossAxisCount: 3,
                                       children: list_session
                                           .map((e) => _buildItemSessionCard(
-                                          context, size, e, 0))
+                                              context, size, e, 0))
                                           .toList(),
                                     );
                                   }),
@@ -232,7 +236,7 @@ class _ViewScheduleState extends State<ViewSchedule> {
                               height: (7 * size.width) / 8,
                               child: GridView.builder(
                                 gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 3,
                                   childAspectRatio: 4 / 2,
                                 ),
@@ -242,20 +246,22 @@ class _ViewScheduleState extends State<ViewSchedule> {
                                     onTap: update == false
                                         ? null
                                         : () async {
-                                      List list;
-                                      isNow != false
-                                          ? list =
-                                      await list_nhanVienRanh_old(
-                                          index)
-                                          : list = await list_nhanVienRanh(
-                                          index);
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return buildAlertDialog(
-                                                context, list, index);
-                                          });
-                                    },
+                                            List list;
+                                            isNow != false
+                                                ? list =
+                                                    await list_nhanVienRanh_old(
+                                                        index)
+                                                : list =
+                                                    await list_nhanVienRanh(
+                                                        index);
+                                            showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return buildAlertDialog(
+                                                      context, list, index);
+                                                });
+                                          },
                                     child: buildGridItemContent(index),
                                   );
                                 },
@@ -508,7 +514,7 @@ class _ViewScheduleState extends State<ViewSchedule> {
                     onPressed: update != true
                         ? null
                         : () {
-                            setState(() {
+                            setState(() async {
                               //lưu lịch
                               String lich = '';
                               for (int i = 0; i < 21; i++) {
@@ -528,6 +534,32 @@ class _ViewScheduleState extends State<ViewSchedule> {
                                       .update({'lichDuKien': lich});
                               update = false;
                               showToast('Đã lưu các cập nhật', null);
+
+                              try {
+                                List<Employee> employees =
+                                    await SendEmail().getEmployees();
+                                bool result = await SendEmail().sendEmail(
+                                    receiver: employees
+                                        .map((e) => Receiver(e.email, e.name))
+                                        .toList(),
+                                    htmlEmail: SendEmail()
+                                        .generateScheduleTemplate(
+                                            isNow != false
+                                                ? list_item_lichChinhThuc
+                                                : list_item_lichDuKien,
+                                            isNow != false
+                                                ? TraVeTuan(0)
+                                                : TraVeTuan(1)));
+                                showToast(
+                                    result
+                                        ? "Gửi mail thông báo đến nhân viên thành công"
+                                        : "Gửi mail thông báo đến nhân viên thất bại",
+                                    null);
+                              } catch (e) {
+                                showToast(
+                                    'Không thể gửi mail thông báo đến nhân viên',
+                                    null);
+                              }
                             });
                             // Update 25 Dec
                             // fireStore.collection('lich').doc('lich').snapshots().listen((event) {
